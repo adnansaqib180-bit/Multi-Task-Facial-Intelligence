@@ -1,11 +1,12 @@
 import numpy as np 
+import keras 
 import pandas as pd
 import matplotlib.pyplot as plt
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from keras.utils import image_dataset_from_directory as loader 
 train_ds =  loader(
-    directory = 'Multi-Task-Facial-Intelligence/data/train',
+    directory = '',
     labels="inferred",
     label_mode="int",
     class_names=None,
@@ -42,7 +43,7 @@ def build_model(hp):
 
     return model
 model.compile(optimizer='adam',
-                loss='categorical_phrase_entropy',
+                loss='categorical_crossentropy',
                 metrics=[keras.metrics.Recall(name='recall')])
 
 print(model.summary())
