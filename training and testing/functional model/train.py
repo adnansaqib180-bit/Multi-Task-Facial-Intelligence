@@ -1,10 +1,14 @@
+# note :
+# model is trained on kaggle because of the limited GPU resources 
+# on my local machine.
+import matplotlib.pyplot as plt
 from keras.models import Model
 from keras.layers import Input, Dense, Conv2D, MaxPooling2D, Flatten, Dropout
 from keras.preprocessing.image import ImageDataGenerator
 import os 
 import pandas as pd
 
-folder_path = 'training and testing/functional model/'
+folder_path = 'folder path to the dataset'
 
 age=[]
 gender=[]
@@ -100,7 +104,30 @@ model.compile(optimizer='adam',
 
 history = model.fit(train_generator, epochs=10, validation_data=test_generator)
 
+from keras.utils import plot_model
+plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+plt.plot(history.history["loss"], label="Train Loss")
+plt.plot(history.history["val_loss"], label="Validation Loss")
+plt.title("Model Loss")
+plt.ylabel("Loss")
+plt.xlabel("Epoch")
+plt.legend()
+
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history["accuracy"], label="Train Accuracy")
+plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
+plt.title("Model Accuracy")
+plt.ylabel("Accuracy")
+plt.xlabel("Epoch")
+plt.legend()
+
+
+plt.tight_layout()
+plt.show()
 
 
 

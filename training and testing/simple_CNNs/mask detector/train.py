@@ -47,9 +47,13 @@ model.compile(optimizer='adam',
                 metrics=[keras.metrics.Recall(name='recall')])
 
 print(model.summary())
+
 history = model.fit (train_ds,epochs=2,vaidation_data=test_ds)
+
 from keras.utils import plot_model
+
 plot_model(model, to_file='model_plot.png', show_shapes=True, 
            show_layer_names=True)
+
 from emotions_detector.train import ploting
 ploting(history)
