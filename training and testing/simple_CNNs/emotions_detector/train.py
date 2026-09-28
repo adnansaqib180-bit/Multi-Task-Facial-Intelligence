@@ -1,8 +1,12 @@
-import keras 
+from keras.models import Sequential
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from keras.layers import (Dense, Dropout, Flatten, Conv2D,
+                            MaxPooling2D, RandomFlip,RandomRotation,
+                            RandomZoom, Rescaling,
+                            BatchNormalization, Activation)
 from keras.utils import image_dataset_from_directory as loader 
+
 train_ds =  loader(
     directory = r'c:\Users\USER\OneDrive\Desktop\train',
     labels="inferred",
@@ -22,31 +26,38 @@ test_ds =  loader(
     image_size=(48,48)
 )
 
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization, Activation
 
 model = Sequential()
 
-model.add(Conv2D(64, kernel_size=(3,3), padding='same', input_shape=(48, 48, 1)))
+model.add(RandomFlip("horizontal", input_shape=(48, 48, 1)))
+model.add(RandomRotation(0.1))
+model.add(RandomZoom(0.1))
+model.add(Rescaling(1./255))
+
+model.add(Conv2D(64, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
+
 model.add(Conv2D(64, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2,2))) 
 model.add(Dropout(0.25))
+
 model.add(Conv2D(128, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
+
 model.add(Conv2D(128, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2,2))) 
 model.add(Dropout(0.25))
+
 model.add(Conv2D(256, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
+
 model.add(Conv2D(256, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
@@ -54,6 +65,7 @@ model.add(MaxPooling2D(pool_size=(2,2)))
 model.add(Dropout(0.25))
 
 model.add(Flatten())
+
 model.add(Dense(256))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
