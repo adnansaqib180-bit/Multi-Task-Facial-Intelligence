@@ -5,7 +5,7 @@ from keras.utils import image_dataset_from_directory as loader
 from keras.applications import EfficientNetB0
 
 train_ds = loader(
-    directory=r'c:\Users\USER\OneDrive\Desktop\train',
+    directory='/kaggle/input/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images/train',
     labels="inferred",
     label_mode="int",
     class_names=None,
@@ -15,7 +15,7 @@ train_ds = loader(
 )
 
 test_ds = loader(
-    directory=r'c:\Users\USER\OneDrive\Desktop\test',
+    directory='/kaggle/input/datasets/birdy654/cifake-real-and-ai-generated-synthetic-images/test',
     labels="inferred",
     label_mode="int",
     class_names=None,
@@ -49,7 +49,7 @@ model.compile(
 
 print('--- Phase 1: Training Top Layers oonly ---')
 print(model.summary())
-model.fit(train_ds, epochs=7, validation_data=test_ds)
+model.fit(train_ds, epochs=2, validation_data=test_ds)
 
 base_model.trainable = True
 
@@ -67,4 +67,28 @@ model.compile(
 print("\n-- Phase 2 : Fine-Tuning Last 20 Layers ---")
 print(model.summary())  
 
-model.fit(train_ds, epochs=50, validation_data=test_ds)
+history = model.fit(train_ds, epochs=10, validation_data=test_ds)
+
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+plt.plot(history.history["loss"], label="Train Loss")
+plt.plot(history.history["val_loss"], label="Validation Loss")
+plt.title("Model Loss")
+plt.ylabel("Loss")
+plt.xlabel("Epoch")
+plt.legend()
+
+
+plt.subplot(1, 2, 2)
+plt.plot(history.history["accuracy"], label="Train Accuracy")
+plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
+plt.title("Model Accuracy")
+plt.ylabel("Accuracy")
+plt.xlabel("Epoch")
+plt.legend()
+
+
+plt.tight_layout()
+plt.show()
+model.save('final_ann.keras')
+print('model saved')
