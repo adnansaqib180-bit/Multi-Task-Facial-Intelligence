@@ -98,5 +98,5 @@ plt.legend()
 
 plt.tight_layout()
 plt.show()
-# model.save('final_ann.keras')
-# print('model saved')
+model.save('emotions.keras')
+print('model saved')

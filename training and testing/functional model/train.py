@@ -9,7 +9,7 @@ from keras.models import Model
 from keras.layers import (Input, Dense, Conv2D, MaxPooling2D, Flatten,
                           RandomFlip, RandomRotation, RandomZoom, Rescaling)
 
-folder_path = '/kaggle/input/utkface-new/UTKFace'
+folder_path = '/kaggle/input/datasets/jangedoo/utkface-new/UTKFace'
 
 age = []
 gender = []
@@ -130,3 +130,6 @@ plt.legend()
 
 plt.tight_layout()
 plt.show()
+
+model.save('age_gender.keras')
+print('model saved')
