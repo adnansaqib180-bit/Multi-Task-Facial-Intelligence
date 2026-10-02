@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Task-Facial-Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@300;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070b1a;--ink:#eaf1ff;--mute:#8f9cc4;--c1:#6ee7f9;--c2:#a78bfa;--c3:#f472b6;--glass:rgba(255,255,255,.07);--edge:rgba(255,255,255,.18)}
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;overflow-x:hidden;padding:clamp(16px,4vw,48px)}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:.55;z-index:-1;animation:drift 18s ease-in-out infinite alternate}
+.o1{width:480px;height:480px;background:#4f46e5;top:-120px;left:-100px}
+.o2{width:420px;height:420px;background:#0ea5b7;bottom:-100px;right:-80px;animation-delay:-6s}
+.o3{width:300px;height:300px;background:#c026d3;top:40%;left:55%;opacity:.35;animation-delay:-11s}
+@keyframes drift{to{transform:translate(70px,50px) scale(1.15)}}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%)}
+.wrap{max-width:1040px;margin:0 auto}
+h1{font-family:Sora,sans-serif;font-weight:600;font-size:clamp(1.9rem,5vw,3.2rem);letter-spacing:-.02em;text-align:center;line-height:1.1;background:linear-gradient(100deg,#fff 20%,var(--c1) 55%,var(--c2));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 7s linear infinite}
+@keyframes flow{to{background-position:200% center}}
+.sub{text-align:center;color:var(--mute);margin:12px 0 34px;font-weight:300}
+.glass{background:var(--glass);border:1px solid var(--edge);border-radius:26px;backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);box-shadow:0 20px 60px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.tab{position:relative;overflow:hidden;cursor:pointer;color:var(--ink);font:500 1rem 'Space Grotesk',sans-serif;padding:18px 12px;border-radius:20px;border:1px solid var(--edge);background:var(--glass);backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .35s cubic-bezier(.2,.9,.3,1.4),box-shadow .35s,border-color .35s}
+.tab svg{width:26px;height:26px;stroke:var(--mute);fill:none;stroke-width:1.6;transition:.35s}
+.tab::after{content:"";position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-20deg);transition:left .7s}
+.tab:hover{transform:translateY(-4px)}.tab:hover::after{left:130%}
+.tab:active{transform:scale(.96)}
+.tab.on{border-color:var(--c1);box-shadow:0 0 0 1px var(--c1),0 0 34px rgba(110,231,249,.35),inset 0 0 24px rgba(110,231,249,.12)}
+.tab.on svg{stroke:var(--c1);filter:drop-shadow(0 0 6px var(--c1))}
+.tab:focus-visible,.go:focus-visible,.drop:focus-visible{outline:2px solid var(--c1);outline-offset:3px}
+.panel{display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:26px}
+@media(max-width:760px){.panel{grid-template-columns:1fr}.tab{font-size:.85rem;padding:14px 6px}}
+.drop{position:relative;aspect-ratio:1;border-radius:20px;border:1.5px dashed rgba(255,255,255,.3);display:grid;place-items:center;text-align:center;color:var(--mute);cursor:pointer;overflow:hidden;transition:.3s;background:rgba(0,0,0,.18)}
+.drop:hover,.drop.over{border-color:var(--c1);background:rgba(110,231,249,.07)}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.drop.has img{display:block}.drop.has .hint{display:none}
+.hint small{display:block;margin-top:6px;opacity:.7}
+.scan{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--c1),transparent);box-shadow:0 0 22px 6px rgba(110,231,249,.55);top:0;display:none}
+.busy .scan{display:block;animation:scan 1.3s ease-in-out infinite alternate}
+@keyframes scan{to{top:calc(100% - 3px)}}
+.go{margin-top:16px;width:100%;padding:15px;border:0;border-radius:16px;cursor:pointer;font:700 1rem 'Space Grotesk',sans-serif;color:#06101f;background:linear-gradient(100deg,var(--c1),var(--c2),var(--c3));background-size:200% auto;transition:.4s;box-shadow:0 8px 28px rgba(167,139,250,.35)}
+.go:hover:not(:disabled){background-position:100% center;transform:translateY(-2px)}
+.go:disabled{opacity:.4;cursor:not-allowed}
+.out{display:flex;flex-direction:column;justify-content:center;min-height:260px}
+.idle{text-align:center;color:var(--mute);font-weight:300}
+.verdict{font-family:Sora,sans-serif;font-size:clamp(2rem,5vw,2.9rem);font-weight:600;text-transform:capitalize;background:linear-gradient(100deg,var(--c1),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .6s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes pop{from{opacity:0;transform:scale(.8) translateY(10px)}}
+.meta{color:var(--mute);margin:4px 0 22px}
+.row{margin-bottom:14px}
+.lab{display:flex;justify-content:space-between;font-size:.92rem;margin-bottom:6px;text-transform:capitalize}
+.lab b{font-weight:500;color:var(--c1)}
+.track{height:12px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--c2),var(--c1));box-shadow:0 0 14px rgba(110,231,249,.6);transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.row.top .fill{background:linear-gradient(90deg,var(--c3),var(--c2),var(--c1))}
+.err{color:#fda4af;text-align:center}
+.api{margin-top:20px;text-align:center;color:var(--mute);font-size:.8rem}
+.api input{background:rgba(255,255,255,.06);border:1px solid var(--edge);border-radius:10px;color:var(--ink);padding:6px 10px;font:inherit;width:230px;margin-left:6px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<main class="wrap">
+  <h1>Multi-Task-Facial-Intelligence</h1>
+  <p class="sub">Upload an image, pick an analysis, and watch the model think.</p>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab on" data-m="age-gender" role="tab">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Age &amp; Gender</button>
+    <button class="tab" data-m="real-vs-ai" role="tab">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 14l3-3 2 2 3-4 2 3M8 9h.01"/></svg>AI vs Real</button>
+    <button class="tab" data-m="emotion" role="tab">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 2 3 3 4 3s3-1 4-3M9 9.5h.01M15 9.5h.01"/></svg>Emotion</button>
+  </nav>
+
+  <section class="glass panel">
+    <div>
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose an image">
+        <img id="prev" alt="Selected image"><div class="scan"></div>
+        <div class="hint">Drop an image here or click to browse<small>JPEG, PNG or WebP, up to 10 MB</small></div>
+      </div>
+      <input type="file" id="file" accept="image/jpeg,image/png,image/webp" hidden>
+      <button class="go" id="go" disabled>Analyze age &amp; gender</button>
+    </div>
+    <div class="out" id="out"><p class="idle">Results will appear here.</p></div>
+  </section>
+
+  <p class="api">API address<input id="base" value="http://localhost:8000" spellcheck="false"></p>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const MODES = {
+  'age-gender': 'Analyze age & gender',
+  'real-vs-ai': 'Check real or AI',
+  'emotion': 'Detect emotion'
+};
+let mode = 'age-gender', file = null;
+if (location.protocol.startsWith('http')) $('#base').value = location.origin;
+const drop = $('#drop'), fileIn = $('#file'), go = $('#go'), out = $('#out');
+const pct = v => (v * 100).toFixed(1) + '%';
+
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+  mode = t.dataset.m;
+  go.textContent = MODES[mode];
+  out.innerHTML = '<p class="idle">Results will appear here.</p>';
+});
+
+drop.onclick = () => fileIn.click();
+drop.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileIn.click(); } };
+fileIn.onchange = () => pick(fileIn.files[0]);
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => pick(e.dataTransfer.files[0]));
+
+function pick(f) {
+  if (!f) return;
+  file = f;
+  $('#prev').src = URL.createObjectURL(f);
+  drop.classList.add('has');
+  go.disabled = false;
+}
+
+function bars(items, topKey) {
+  return items.map(([k, v]) => `<div class="row ${k === topKey ? 'top' : ''}">
+    <div class="lab"><span>${k}</span><b>${pct(v)}</b></div>
+    <div class="track"><div class="fill" data-w="${v * 100}"></div></div></div>`).join('');
+}
+
+function countUp(el, to, ms = 1100) {
+  const t0 = performance.now();
+  const step = t => {
+    const p = Math.min((t - t0) / ms, 1), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(to * e);
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function render(d) {
+  let html, top = null;
+  if (mode === 'age-gender') {
+    const items = Object.entries(d.gender_probabilities);
+    html = `<div class="verdict"><span id="age">0</span> yrs · ${d.gender}</div>
+      <p class="meta">Estimated age and gender</p>${bars(items, d.gender)}`;
+  } else if (mode === 'real-vs-ai') {
+    const items = Object.entries(d.probabilities);
+    html = `<div class="verdict">${d.label}</div>
+      <p class="meta">Confidence ${pct(d.confidence)}</p>${bars(items, d.label)}`;
+  } else {
+    const items = Object.entries(d.probabilities).sort((a, b) => b[1] - a[1]);
+    html = `<div class="verdict">${d.emotion}</div>
+      <p class="meta">Confidence ${pct(d.confidence)}</p>${bars(items, d.emotion)}`;
+  }
+  out.innerHTML = html;
+  const age = $('#age'); if (age) countUp(age, d.age);
+  requestAnimationFrame(() => requestAnimationFrame(() =>
+    out.querySelectorAll('.fill').forEach((f, i) => {
+      f.style.transitionDelay = i * 90 + 'ms';
+      f.style.width = f.dataset.w + '%';
+    })));
+}
+
+go.onclick = async () => {
+  if (!file) return;
+  go.disabled = true; drop.classList.add('busy');
+  out.innerHTML = '<p class="idle">Analyzing…</p>';
+  const body = new FormData(); body.append('image', file);
+  try {
+    const r = await fetch($('#base').value.replace(/\/$/, '') + '/predict/' + mode, { method: 'POST', body });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.detail || 'Request failed');
+    render(j);
+  } catch (e) {
+    out.innerHTML = `<p class="err">${e.message === 'Failed to fetch'
+      ? 'Could not reach the API. Check the address below and that the server is running with CORS enabled.'
+      : e.message}</p>`;
+  } finally {
+    go.disabled = false; drop.classList.remove('busy');
+  }
+};
+</script>
+</body>
+</html>

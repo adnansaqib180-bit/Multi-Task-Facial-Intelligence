@@ -1,0 +1,6 @@
+trained models/
+*.keras
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
