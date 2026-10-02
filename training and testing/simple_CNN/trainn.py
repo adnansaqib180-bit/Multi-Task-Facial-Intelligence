@@ -8,6 +8,7 @@ from keras.layers import *
 from keras.utils import image_dataset_from_directory as loader
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping
 
+
 train_ds = loader(
     directory='/kaggle/working/cleaned_dataset/train_dir',
     labels="inferred",
@@ -39,14 +40,29 @@ class_weights = compute_class_weight(
 class_weight_dict = dict(enumerate(class_weights))
 print("Computed Class Weights:", class_weight_dict)
 
+y_train = []
+for images, labels in train_ds.unbatch():
+    y_train.append(labels.numpy())
+
+classes = np.unique(y_train)
+class_weights = compute_class_weight(
+    class_weight='balanced',
+    classes=classes,
+    y=y_train
+)
+class_weight_dict = dict(enumerate(class_weights))
+print("Computed Class Weights:", class_weight_dict)
 
 model = Sequential()
 
 
 model.add(Rescaling(1./255, input_shape=(124, 124, 1)))
-model.add(RandomFlip("horizontal"))  # Only horizontal flip for facial expression
+model.add(RandomFlip("horizontal"))  
 
+model.add(Rescaling(1./255, input_shape=(124, 124, 1)))
+model.add(RandomFlip("horizontal"))  
 
+# Block 1
 model.add(Conv2D(64, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
@@ -56,6 +72,7 @@ model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 model.add(Dropout(0.25))
 
+# Block 2
 model.add(Conv2D(128, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
@@ -65,6 +82,7 @@ model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2,2)))
 model.add(Dropout(0.3))
 
+# Block 3
 model.add(Conv2D(256, kernel_size=(3,3), padding='same'))
 model.add(BatchNormalization())
 model.add(Activation('relu'))
@@ -110,6 +128,27 @@ history = model.fit(
     callbacks=[lr_reduction, early_stopping]
 )
 
+early_stopping = EarlyStopping(
+    monitor='val_loss', 
+    patience=10, 
+    restore_best_weights=True
+)
+model.compile(
+    loss='sparse_categorical_crossentropy', 
+    optimizer=keras.optimizers.Adam(learning_rate=0.001), 
+    metrics=['accuracy']
+)
+
+#  Training
+history = model.fit(
+    train_ds,
+    epochs=20,
+    validation_data=test_ds,
+    class_weight=class_weight_dict,
+    callbacks=[lr_reduction, early_stopping]
+)
+
+#  Plotting Results
 plt.figure(figsize=(10, 4))
 plt.subplot(1, 2, 1)
 plt.plot(history.history["loss"], label="Train Loss")
@@ -130,3 +169,4 @@ plt.show()
 
 model.save('emotion_model.keras')
 print('model saved')
+plt.show()
