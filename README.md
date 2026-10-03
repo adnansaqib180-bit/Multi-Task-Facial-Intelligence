@@ -22,11 +22,9 @@ web interface.
 
 ## 🎬 Screen recording
 
-[▶ Watch the project screen recording](video/Screen%20Recording%202026-10-03%20190016.mp4)
+[▶ Watch the project screen recording]([video/Screen%20Recording%202026-10-03%20190016.mp4](https://github.com/user-attachments/assets/c52161c5-5d0e-4fc1-ae04-a0fa623303fb))
 
-> The recording is in the local `video/` folder. That folder is currently
-> Git-ignored, so the video link is available in your working copy but the video
-> itself is not included when someone clones the repository.
+
 
 ## 🌟 Features
 
