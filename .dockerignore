@@ -1,0 +1,32 @@
+# Virtual environments
+venv/
+.venv/
+.oldpython/
+env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Git version control
+.git/
+.gitignore
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Sensitive information
+.env
+
+# Large local datasets or models (adjust if you need them in the container)
+data/
+logs/
+*.csv
+*.parquet
+*.pkl
+*.h5
