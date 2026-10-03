@@ -22,7 +22,7 @@ web interface.
 
 ## 🎬 Screen recording
 
-[▶ Watch the project screen recording]([video/Screen%20Recording%202026-10-03%20190016.mp4](https://github.com/user-attachments/assets/c52161c5-5d0e-4fc1-ae04-a0fa623303fb))
+[▶ Watch the project screen recording]((https://github.com/user-attachments/assets/c52161c5-5d0e-4fc1-ae04-a0fa623303fb))
 
 
 
