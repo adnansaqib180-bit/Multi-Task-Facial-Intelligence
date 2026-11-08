@@ -1,12 +1,21 @@
 import torch 
 from torch.nn import *
 from torch.utils.data import DataLoader
-from torchdividion import dataset 
+from torchvision import datasets, transforms
 TRAIN = '/kaggle/working/cleaned_dataset/train_dir'
 TEST = '/kaggle/working/cleaned_dataset/test_dir'
 
-train_data = dataset.ImageLoader(root_dir =TRAIN)
-test_data = dataset.ImageLoader(root_dir =TEST)
+train_transforms = transforms.Compose([
+    transforms.Resize((224, 224)),     
+    transforms.RandomHorizontalFlip(),     
+    transforms.ToTensor(),         
+    transforms.Normalize(                      
+        mean=[0.485, 0.456, 0.406], 
+        std=[0.229, 0.224, 0.225]
+    )
+])
+train_data = datasets.ImageFolder(root_dir =TRAIN,transform=train_transforms)
+test_data = datasets.ImageFolder(root_dir =TEST)
 train_loader = DataLoader(
     dataset= train_data,
     shuffle=True,
