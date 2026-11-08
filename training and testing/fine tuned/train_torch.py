@@ -34,9 +34,9 @@ test_loader = DataLoader(
     pin_memory=True
 )
 
-from torchvision.models import vgg16
+from torchvision.models import EfficientNet
 
-base_model = vgg16(pretrained= True )
+base_model = EfficientNet(pretrained= True )
 
 for params in base_model.parameters():
     params.requires_grad = False
