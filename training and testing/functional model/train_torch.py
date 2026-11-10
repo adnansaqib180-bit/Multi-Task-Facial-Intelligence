@@ -48,23 +48,22 @@ class MultiOutputCNN(Module):
         self.covolutions = Sequential(
             RandomHorizontalFlip(),
             RandomRotation(0.1),
-            Resize((224,224,3)),
-            Conv2d(64, 3,  padding='same'),
+            Conv2d(3,64, 3,  padding='same'),
             MaxPool2d((2, 2),2),
-            Conv2d(128, 3,padding='same'),
-            Conv2d(128, 3,padding='same'),
+            Conv2d(64,128, 3,padding='same'),
+            Conv2d(128,128, 3,padding='same'),
             MaxPool2d((2, 2),2),
-            Conv2d(256, 3, padding='same'),
-            Conv2d(256, 3, padding='same'),
-            Conv2d(256, 3,padding='same'),
+            Conv2d(128,256, 3, padding='same'),
+            Conv2d(256,256, 3, padding='same'),
+            Conv2d(256,256, 3,padding='same'),
             MaxPool2d((2, 2),2),
-            Conv2d(512, 3,padding='same'),
-            Conv2d(512, 3,padding='same'),
-            Conv2d(512, 3,padding='same'),
+            Conv2d(256,512, 3,padding='same'),
+            Conv2d(512,512, 3,padding='same'),
+            Conv2d(512,512, 3,padding='same'),
             MaxPool2d((2, 2),2),
-            Conv2d(512, 3,padding='same'),
-            Conv2d(512, 3,padding='same'),
-            Conv2d(512, 3,padding='same'),
+            Conv2d(512,512, 3,padding='same'),
+            Conv2d(512,512, 3,padding='same'),
+            Conv2d(512,512, 3,padding='same'),
             MaxPool2d((2, 2),2), 
         )
         self.age_ann  = Sequential(
@@ -81,7 +80,7 @@ class MultiOutputCNN(Module):
             Sigmoid()
         )
     def forward(self,x):
-        inputs = self.covolutions(x),
+        inputs = self.covolutions(x)
         age = self.age_ann(inputs)
         gender = self.gender_ann(inputs)
         return age,gender 
@@ -104,18 +103,20 @@ for i in range (epochs):
         gender_loss = criterian_gender(gender_pred,gender)
         train_gender_loss+=gender_loss.item()
         loss = age_loss+gender_loss
+        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
     print(f'epochs ==> {i+1}, gender loss ==>{train_gender_loss}, age loss ==> {train_age_loss}')
     model.eval()
     test_age_loss = 0.0
     test_gender_loss = 0.0
-    for image, labels in test_loader:
-        age = labels['age']
-        gender = labels['gender']
-        age_pred,gender_pred = model(image)
-        age_loss = criterian_age(age_pred,age)
-        test_age_loss+=age_loss.item()
-        gender_loss = criterian_gender(gender_pred,gender)
-        total_gender_loss+=gender_loss.item()
-    print(f'epochs ==> {i+1}, gender loss ==>{train_gender_loss}, age loss ==> {train_age_loss}')
+    with torch.no_grad():
+        for image, labels in test_loader:
+            age = labels['age_output']
+            gender = labels['gender_output']
+            age_pred,gender_pred = model(image)
+            age_loss = criterian_age(age_pred,age)
+            test_age_loss+=age_loss.item()
+            gender_loss = criterian_gender(gender_pred,gender)
+            total_gender_loss+=gender_loss.item()
+        print(f'epochs ==> {i+1}, gender loss ==>{train_gender_loss}, age loss ==> {train_age_loss}')

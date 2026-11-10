@@ -91,7 +91,7 @@ for i in range (epochs):
         train_loss+=loss.item()* image.size(0)
     model.eval()
     eval_loss = 0.0
-    with optimizer.zero_grad():
+    with torch.no_grad():
         for image , label in test_loader:
             prediction = model(image)
             loss = criterian(prediction,label)
