@@ -100,5 +100,5 @@ for i in range (epochs):
     avg_train_loss = train_loss / len(train_loader.dataset)
     avg_val_loss = eval_loss / len(test_loader.dataset)
     
-    print(f"Epoch {epochs+1}/{epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
+    print(f"Epoch {i+1}/{epochs} , Train Loss: {avg_train_loss:.4f} , Val Loss: {avg_val_loss:.4f}")
            
